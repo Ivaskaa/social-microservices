@@ -8,7 +8,7 @@ pipeline {
     }
 
     triggers {
-        pollSCM('H/30 * * * *') // Poll SCM
+        pollSCM('H/30 * * * *')
     }
 
     stages {
