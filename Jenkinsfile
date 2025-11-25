@@ -27,7 +27,7 @@ pipeline {
                         """
 
                         // 2. Deploy to Kubernetes
-                        def deploymentFile = "${s}/k8s/deployment.yaml"
+                        def deploymentFile = "${s}/deployment/k8s/deployment.yaml"
                         echo "Applying Kubernetes YAML for ${s}..."
                         sh "kubectl apply -f ${deploymentFile}"
 
