@@ -1,31 +1,22 @@
-# 1. Stage: build the jar
+# Встановлюємо Maven та JDK
 FROM maven:3.9.4-eclipse-temurin-21 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy pom.xml and download dependencies first (caching layer)
-COPY pom.xml .
-COPY ../pom.xml ../pom.xml
+# Копіюємо весь код багатомодульного проєкту
+COPY . .
+
+# Завантажуємо залежності
 RUN mvn dependency:go-offline
 
-# Copy source code
-COPY src ./src
-
-# Build the jar
+# Будуємо jar
 RUN mvn clean package -DskipTests
 
-# 2. Stage: run the jar
+# Фінальний образ
 FROM eclipse-temurin:21-jdk-jammy
-
-# Set working directory
 WORKDIR /app
+COPY --from=build /app/auth-service/target/auth-service-0.0.1-SNAPSHOT.jar ./auth-service.jar
 
-# Copy jar from build stage
-COPY --from=build /app/target/auth-service-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose service port
 EXPOSE 8081
 
-# Run the service
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+CMD ["java", "-jar", "auth-service.jar"]
