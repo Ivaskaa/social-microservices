@@ -14,7 +14,8 @@ pipeline {
         stage('Build and Deploy All Microservices') {
             steps {
                 script {
-                    def services = ['auth-service']  // Тестовий масив, пізніше додаси інші сервіси
+                    // Список мікросервісів
+                    def services = ['auth-service']  // Тут можна додати інші сервіси
 
                     for (s in services) {
                         echo "Building and deploying ${s}"
@@ -26,18 +27,12 @@ pipeline {
                         """
 
                         // 2. Deploy to Kubernetes
-                        def deploymentFile = "${s}/deployment/k8s/deployment.yaml"
-                        def deployExists = sh(script: "kubectl get deployment ${s} -n default", returnStatus: true) == 0
+                        def deploymentFile = "${s}/k8s/deployment.yaml"
+                        echo "Applying Kubernetes YAML for ${s}..."
+                        sh "kubectl apply -f ${deploymentFile}"
 
-                        if (deployExists) {
-                            echo "Deployment exists. Updating image..."
-                            sh "kubectl set image deployment/${s} ${s}=$REGISTRY/$s:latest -n default"
-                        } else {
-                            echo "Deployment does not exist. Creating from file..."
-                            sh "kubectl apply -f ${deploymentFile}"
-                        }
-
-                        // 3. Rollout status
+                        // 3. Ensure new image rollout
+                        sh "kubectl set image deployment/${s} ${s}=$REGISTRY/$s:latest -n default"
                         sh "kubectl rollout status deployment/${s} -n default"
                     }
                 }
