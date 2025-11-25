@@ -19,6 +19,7 @@ services:
       - JAVA_OPTS=-Xmx2048m
     restart: unless-stopped
 
+
   registry:
     image: registry:2
     container_name: registry
