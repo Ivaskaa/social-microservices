@@ -3,30 +3,31 @@ pipeline {
 
     environment {
         REGISTRY = "localhost:5000"
-        IMAGE = "my-microservice"
         KUBECONFIG = "/root/.kube/config"
     }
 
     triggers {
-        pollSCM('H/30 * * * *')
+        pollSCM('H/2 * * * *')
     }
 
     stages {
-        stage('Build Docker Image') {
+        stage('Build and Deploy All Microservices') {
             steps {
-                sh """
-                    docker build -t $REGISTRY/$IMAGE:latest .
-                    docker push $REGISTRY/$IMAGE:latest
-                """
-            }
-        }
+                script {
+                    def services = ['auth-service','config-service','discovery-service','gateway-service','notification-service','post-service','user-service']
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh """
-                    kubectl set image deployment/$IMAGE $IMAGE=$REGISTRY/$IMAGE:latest -n default
-                    kubectl rollout status deployment/$IMAGE -n default
-                """
+                    for (s in services) {
+                        dir(s) {
+                            echo "Building and deploying ${s}"
+                            sh """
+                                docker build -t $REGISTRY/$s:latest .
+                                docker push $REGISTRY/$s:latest
+                                kubectl set image deployment/$s $s=$REGISTRY/$s:latest -n default
+                                kubectl rollout status deployment/$s -n default
+                            """
+                        }
+                    }
+                }
             }
         }
     }
