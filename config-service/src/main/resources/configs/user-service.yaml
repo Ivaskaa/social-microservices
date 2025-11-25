@@ -18,3 +18,6 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
   jackson:
     time-zone: UTC
+
+service-auth:
+  url: http://localhost:8081

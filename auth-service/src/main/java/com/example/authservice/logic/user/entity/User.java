@@ -8,17 +8,18 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-@Entity
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String email;
+    private String username;
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)

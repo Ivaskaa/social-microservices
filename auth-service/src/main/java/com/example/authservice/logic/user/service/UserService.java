@@ -1,44 +1,34 @@
 package com.example.authservice.logic.user.service;
 
-import com.example.authservice.logic.auth.dto.request.LoginRequest;
-import com.example.authservice.logic.auth.dto.request.RegisterRequest;
 import com.example.authservice.logic.user.entity.User;
 import com.example.authservice.logic.user.repository.UserRepository;
-import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AuthException("Email already exists");
-        }
-
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .permissions(Set.of("USER_READ", "USER_WRITE"))
-                .build();
-
-        return userRepository.save(user);
+    public boolean validateUser(String username, String password) {
+        return userRepository.findByUsername(username)
+                .map(user -> passwordEncoder.matches(password, user.getPassword()))
+                .orElse(false);
     }
 
-    public User validateUser(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AuthException("Invalid credentials"));
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new AuthException("Invalid credentials");
+    public void registerUser(String username, String password) {
+        if (userRepository.existsByUsername(username)) {
+            throw new RuntimeException("User already exists");
         }
-
-        return user;
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+        log.info("User {} registered successfully", username);
     }
 }
