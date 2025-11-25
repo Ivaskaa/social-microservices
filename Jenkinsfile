@@ -14,8 +14,8 @@ pipeline {
         stage('Build and Deploy All Microservices') {
             steps {
                 script {
-                    // Список мікросервісів
-                    def services = ['auth-service']  // Тут можна додати інші сервіси
+                    // Microservices list
+                    def services = ['auth-service']  // add new microservices
 
                     for (s in services) {
                         echo "Building and deploying ${s}"
