@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // Microservices list
-                    def services = ['auth-service']  // add new microservices
+                    def services = ['config-service']  // add new microservices
 
                     for (s in services) {
                         echo "Building and deploying ${s}"

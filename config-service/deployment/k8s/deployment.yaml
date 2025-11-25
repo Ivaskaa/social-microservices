@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-service
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: config-service
+  template:
+    metadata:
+      labels:
+        app: config-service
+    spec:
+      restartPolicy: Always        # автоматичний перезапуск при падінні
+      containers:
+        - name: config-service
+          image: localhost:5000/config-service:latest
+          ports:
+            - containerPort: 8888
+          livenessProbe:          # перевірка “живучості” пода
+            httpGet:
+              path: /actuator/health
+              port: 8888
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:         # перевірка готовності пода приймати трафік
+            httpGet:
+              path: /actuator/health
+              port: 8888
+            initialDelaySeconds: 10
+            periodSeconds: 5

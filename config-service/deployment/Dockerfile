@@ -20,15 +20,15 @@ RUN mvn dependency:go-offline -B
 COPY . .
 
 # 4. Compile JARs for a specific microservice
-RUN mvn -f pom.xml -pl auth-service clean package -DskipTests
+RUN mvn -f pom.xml -pl config-service clean package -DskipTests
 
 # Stage 2: Run the JAR
 FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/auth-service/target/auth-service-0.0.1-SNAPSHOT.jar ./auth-service.jar
+COPY --from=build /app/config-service/target/config-service-0.0.1-SNAPSHOT.jar ./config-service.jar
 
-EXPOSE 8081
+EXPOSE 8888
 
-ENTRYPOINT ["java", "-jar", "auth-service.jar"]
+ENTRYPOINT ["java", "-jar", "config-service.jar"]
