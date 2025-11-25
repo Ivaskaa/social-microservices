@@ -1,3 +1,4 @@
+# config-service-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,21 +14,38 @@ spec:
       labels:
         app: config-service
     spec:
-      restartPolicy: Always        # автоматичний перезапуск при падінні
+      restartPolicy: Always
       containers:
         - name: config-service
           image: localhost:5000/config-service:latest
           ports:
             - containerPort: 8888
-          livenessProbe:          # перевірка “живучості” пода
+          livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8888
             initialDelaySeconds: 15
             periodSeconds: 10
-          readinessProbe:         # перевірка готовності пода приймати трафік
+          readinessProbe:
             httpGet:
               path: /actuator/health
               port: 8888
             initialDelaySeconds: 10
             periodSeconds: 5
+
+---
+# config-service-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-service
+  namespace: default
+spec:
+  selector:
+    app: config-service
+  ports:
+    - protocol: TCP
+      port: 8888        # зовнішній порт для сервісу
+      targetPort: 8888  # порт контейнера
+      nodePort: 30088   # NodePort для доступу з локальної машини
+  type: NodePort
