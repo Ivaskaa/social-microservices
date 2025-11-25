@@ -14,6 +14,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
+                sh 'git fetch --all'
                 git branch: 'develop',
                     credentialsId: 'github-token',
                     url: 'https://github.com/Ivaskaa/social-microservices.git'
