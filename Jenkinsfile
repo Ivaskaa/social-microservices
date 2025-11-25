@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "localhost:5000"       // локальний docker registry
-        IMAGE = "my-microservice"         // назва твого сервісу
-        KUBECONFIG = "/root/.kube/config" // бо ~/.kube замаплено у контейнер Jenkins
+        REGISTRY = "localhost:5000"
+        IMAGE = "my-microservice"
+        KUBECONFIG = "/root/.kube/config"
     }
 
     triggers {
