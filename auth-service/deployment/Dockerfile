@@ -5,13 +5,13 @@ FROM maven:3.9.4-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Копіюємо кореневий pom.xml і pom.xml модуля для кешування залежностей
-COPY . .
+COPY .. .
 
 # Завантажуємо залежності для всього проєкту (включаючи підмодуль)
 RUN mvn -f pom.xml -pl auth-service dependency:go-offline -B
 
 # Копіюємо весь код проєкту
-COPY . .
+COPY .. .
 
 # Збираємо JAR для auth-service
 RUN mvn -f pom.xml -pl auth-service clean package -DskipTests

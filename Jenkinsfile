@@ -21,12 +21,12 @@ pipeline {
 
                         // 1. Build & Push Docker image
                         sh """
-                            docker build -f ${s}/Dockerfile -t $REGISTRY/$s:latest .
+                            docker build -f ${s}/deployment/Dockerfile -t $REGISTRY/$s:latest .
                             docker push $REGISTRY/$s:latest
                         """
 
                         // 2. Deploy to Kubernetes
-                        def deploymentFile = "${s}/k8s/deployment.yaml"
+                        def deploymentFile = "${s}/deployment/k8s/deployment.yaml"
                         def deployExists = sh(script: "kubectl get deployment ${s} -n default", returnStatus: true) == 0
 
                         if (deployExists) {
