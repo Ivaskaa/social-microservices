@@ -14,7 +14,7 @@ pipeline {
         stage('Build and Deploy All Microservices') {
             steps {
                 script {
-                    def services = ['auth-service','config-service','discovery-service','gateway-service','notification-service','post-service','user-service']
+                    def services = ['auth-service']
 
                     for (s in services) {
                         echo "Building and deploying ${s}"
