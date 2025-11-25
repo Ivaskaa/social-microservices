@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class KeyConfig {
 
-
     private final Map<String, RSAKey> activeKeys = new ConcurrentHashMap<>();
     private final AtomicReference<RSAKey> currentKey = new AtomicReference<>();
 
