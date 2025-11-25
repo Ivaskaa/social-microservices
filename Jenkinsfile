@@ -17,15 +17,13 @@ pipeline {
                     def services = ['auth-service','config-service','discovery-service','gateway-service','notification-service','post-service','user-service']
 
                     for (s in services) {
-                        dir(s) {
-                            echo "Building and deploying ${s}"
-                            sh """
-                                docker build -t $REGISTRY/$s:latest .
-                                docker push $REGISTRY/$s:latest
-                                kubectl set image deployment/$s $s=$REGISTRY/$s:latest -n default
-                                kubectl rollout status deployment/$s -n default
-                            """
-                        }
+                        echo "Building and deploying ${s}"
+                        sh """
+                            docker build -f $s/Dockerfile -t $REGISTRY/$s:latest .
+                            docker push $REGISTRY/$s:latest
+                            kubectl set image deployment/$s $s=$REGISTRY/$s:latest -n default
+                            kubectl rollout status deployment/$s -n default
+                        """
                     }
                 }
             }
