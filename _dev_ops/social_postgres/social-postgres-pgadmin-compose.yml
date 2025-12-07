@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  postgres:
+    container_name: postgres_social
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres_db
+      TZ: UTC
+    volumes:
+      - pgdata:/var/lib/postgresql/18/main
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin4_social
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@email.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+
+volumes:
+  pgdata:

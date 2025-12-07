@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @FeignClient(
         name = "auth-service",
-        url = "${service-auth.url}", // todo add microservice url to properties
-        fallback = AuthFeignClientFallback.class // todo add parameters to properties
+        url = "${service-auth.url}",
+        fallback = AuthFeignClientFallback.class
 )
 public interface AuthFeignClient {
 

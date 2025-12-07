@@ -7,8 +7,8 @@ public interface UserMapper {
     static UserResponse mapUserToUserResponse(User user) {
         return new UserResponse(
                 user.getId(),
-                user.getName(),
-                user.getEmail()
+                user.getUsername(),
+                user.getUsername()
         );
     }
 }

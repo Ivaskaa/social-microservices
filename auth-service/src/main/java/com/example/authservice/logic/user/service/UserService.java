@@ -1,5 +1,6 @@
 package com.example.authservice.logic.user.service;
 
+import com.example.authservice.logic.auth.model.request.RegisterRequest;
 import com.example.authservice.logic.user.entity.User;
 import com.example.authservice.logic.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,20 +16,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public boolean validateUser(String username, String password) {
-        return userRepository.findByUsername(username)
-                .map(user -> passwordEncoder.matches(password, user.getPassword()))
-                .orElse(false);
-    }
-
-    public void registerUser(String username, String password) {
-        if (userRepository.existsByUsername(username)) {
-            throw new RuntimeException("User already exists");
-        }
+    public void registration(RegisterRequest request) {
         User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setLogin(request.getLogin());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-        log.info("User {} registered successfully", username);
+        log.info("User {} registered successfully", request.getLogin());
     }
 }

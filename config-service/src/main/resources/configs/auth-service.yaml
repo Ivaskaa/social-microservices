@@ -3,10 +3,26 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/social_auth
+    url: jdbc:postgresql://localhost:5432/social
     username: postgres
     password: postgres
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
+  kafka:
+    bootstrap-servers: 192.168.1.56:9092
+    consumer:
+      group-id: auth-service-group
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+logging:
+  level:
+    org.springframework.kafka: DEBUG
+    org.apache.kafka.clients.consumer: INFO

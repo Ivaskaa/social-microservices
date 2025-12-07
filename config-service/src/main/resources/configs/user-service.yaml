@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/social_users?options=-c%20TimeZone=UTC
+    url: jdbc:postgresql://localhost:5432/social
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -12,12 +12,23 @@ spring:
       ddl-auto: update
     show-sql: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 192.168.1.56:9092
+    consumer:
+      group-id: user-service-group
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
   jackson:
     time-zone: UTC
+logging:
+  level:
+    org.springframework.kafka: DEBUG
+    org.apache.kafka.clients.consumer: INFO
+
 
 service-auth:
   url: http://localhost:8081

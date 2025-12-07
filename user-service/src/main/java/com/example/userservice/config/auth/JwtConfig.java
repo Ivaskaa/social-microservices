@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.KafkaListener;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,6 +23,10 @@ public class JwtConfig {
         return jwkSet.get();
     }
 
+    public void setJwkSet(JWKSet jwkSet) {
+        this.jwkSet.set(jwkSet);
+    }
+
     @PostConstruct
     private void loadJWKS() {
         try {
@@ -32,17 +35,6 @@ public class JwtConfig {
             log.info("JWKS initial load successful");
         } catch (Exception e) {
             log.error("Failed initial JWKS load", e);
-        }
-    }
-
-    @KafkaListener(topics = "auth.key-rotation", groupId = "user-service")
-    public void onKeyRotation(String message) {
-        try {
-            String jwksJson = authFeignClient.getJwks();
-            jwkSet.set(JWKSet.parse(jwksJson));
-            log.info("JWKS updated successfully after key rotation: {}", message);
-        } catch (Exception e) {
-            log.error("Failed to refresh JWKS from AuthService", e);
         }
     }
 }
