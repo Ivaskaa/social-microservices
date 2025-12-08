@@ -1,4 +1,4 @@
-package com.example.authservice.logic.user.entity;
+package com.example.authservice.logic.auth.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,5 @@
-package com.example.authservice.logic.auth.service;
+package com.example.authservice.config.jwt;
 
-import com.example.authservice.config.jwt.KeyConfig;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSSigner;
@@ -20,16 +19,15 @@ public class JwtService {
 
     private final KeyConfig keyConfig;
 
-    /**
-     * Generates a short-lived access token (default: 15 minutes).
-     */
+    private static final long TOKEN_EXPIRATION_MS = 15 * 60 * 1000; // 15 min
+
     public String generateAccessToken(String subject) {
         try {
             JWSSigner signer = new RSASSASigner(keyConfig.getRsaJWK());
 
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .subject(subject)
-                    .expirationTime(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                    .expirationTime(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_MS))
                     .claim("token_type", "access")
                     .build();
 
@@ -47,10 +45,5 @@ public class JwtService {
             log.error("Failed to generate access JWT", e);
             throw new RuntimeException(e);
         }
-    }
-
-    // Backward compatibility if someone still calls old method
-    public String generateToken(String subject) {
-        return generateAccessToken(subject);
     }
 }

@@ -4,14 +4,13 @@ import com.example.authservice.logic.auth.model.request.LoginRequest;
 import com.example.authservice.logic.auth.model.request.RefreshTokenRequest;
 import com.example.authservice.logic.auth.model.request.RegisterRequest;
 import com.example.authservice.logic.auth.model.response.TokenResponse;
-import com.example.authservice.logic.auth.service.JwtService;
-import com.example.authservice.logic.auth.service.RefreshTokenService;
+import com.example.authservice.logic.auth.service.AuthService;
 import com.example.authservice.logic.auth.validator.AuthValidator;
-import com.example.authservice.logic.user.service.UserService;
 import com.example.authservice.utils.errors_validation.ErrorUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,57 +23,41 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
-    private final UserService userService;
     private final AuthValidator authValidator;
+    private final AuthService authService;
 
     @PostMapping("/login")
-    public TokenResponse login(
+    public ResponseEntity<TokenResponse> login(
             @Valid @RequestBody LoginRequest request,
             BindingResult bindingResult
     ) {
         ErrorUtils.validate(bindingResult);
         authValidator.validateLogin(request);
 
-        String accessToken = jwtService.generateAccessToken(request.getLogin());
-        String refreshToken = refreshTokenService.createAndStore(request.getLogin());
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        TokenResponse response = authService.login(request.getLogin());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/registration")
-    public TokenResponse register(
+    public ResponseEntity<TokenResponse> register(
             @Valid @RequestBody RegisterRequest request,
             BindingResult bindingResult
     ) {
+        authValidator.validateRegistration(request, bindingResult);
         ErrorUtils.validate(bindingResult);
-        authValidator.validateRegistration(request);
 
-        userService.registration(request);
-        String accessToken = jwtService.generateAccessToken(request.getLogin());
-        String refreshToken = refreshTokenService.createAndStore(request.getLogin());
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        TokenResponse response = authService.registration(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")
-    public TokenResponse refresh(
+    public ResponseEntity<TokenResponse> refresh(
             @Valid @RequestBody RefreshTokenRequest request,
             BindingResult bindingResult
     ) {
         ErrorUtils.validate(bindingResult);
 
-        String subject = refreshTokenService.consumeRefreshToken(request.getRefreshToken());
-        String accessToken = jwtService.generateAccessToken(subject);
-        String newRefreshToken = refreshTokenService.createAndStore(subject);
-        return TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(newRefreshToken)
-                .build();
+        TokenResponse response = authService.refresh(request.getRefreshToken());
+        return ResponseEntity.ok(response);
     }
 }

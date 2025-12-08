@@ -1,7 +1,8 @@
 package com.example.authservice.utils.exceptions.exception_handlers;
 
+import com.example.authservice.utils.errors_validation.model.ErrorResponse;
 import com.example.authservice.utils.errors_validation.model.ValidationError;
-import com.example.authservice.utils.exceptions.FieldErrorException;
+import com.example.authservice.utils.exceptions.AuthException;
 import com.example.authservice.utils.exceptions.ValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -23,13 +24,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ex.getErrors());
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<List<ValidationError>> handleValidation(FieldErrorException ex) {
-        ValidationError error = ValidationError.builder()
-                .field(ex.getField())
-                .message(ex.getMessage())
-                .build();
-        return ResponseEntity.badRequest().body(List.of(error));
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ErrorResponse> handleAuthException(AuthException ex) {
+        ErrorResponse error = ErrorResponse.builder().message(ex.getMessage()).build();
+        return ResponseEntity.status(460).body(error);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

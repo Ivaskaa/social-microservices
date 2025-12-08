@@ -33,7 +33,7 @@ public class SwaggerConfig {
     public OpenAPI apiInfo() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("DaCom CRM API")
+                        .title("Social app API")
                         .version("1.0.0"));
     }
 

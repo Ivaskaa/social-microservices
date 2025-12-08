@@ -1,6 +1,6 @@
-package com.example.authservice.logic.user.repository;
+package com.example.authservice.logic.auth.repository;
 
-import com.example.authservice.logic.user.entity.User;
+import com.example.authservice.logic.auth.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
