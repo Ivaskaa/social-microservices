@@ -19,12 +19,12 @@ public class PostMapper {
     private static final Random RANDOM = new Random();
 
 
-    private static ExtraData generateRandomExtraData() {
+    private ExtraData generateRandomExtraData() {
         return new ExtraData(RANDOM.nextInt(1000), "RandomValue" + RANDOM.nextInt(1000));
     }
 
-
-    private static List<ExtraData> generateRandomExtraDataList(int count) {
+    private List<ExtraData> generateRandomExtraDataList() {
+        final int count = RANDOM.nextInt(5);
         List<ExtraData> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             list.add(generateRandomExtraData());
@@ -32,20 +32,18 @@ public class PostMapper {
         return list;
     }
 
-
-    public static PostEntity toEntity(CreatePostRequest r) {
+    public PostEntity toEntity(CreatePostRequest r) {
         PostEntity e = new PostEntity();
         e.setUserId(r.userId());
         e.setTitle(r.title());
         e.setContent(r.content());
         e.setAttachment(r.attachment() != null ? r.attachment() :
                 new Attachment("file.txt", "text/plain", 1024, "http://example.com/file.txt"));
-        e.setExtraData(r.extraData() != null ? r.extraData() : generateRandomExtraDataList(3));
+        e.setExtraData(r.extraData() != null ? r.extraData() : generateRandomExtraDataList());
         return e;
     }
 
-
-    public static PostResponse toResponse(PostEntity e) {
+    public PostResponse toResponse(PostEntity e) {
         return new PostResponse(
                 e.getId(),
                 e.getUserId(),
