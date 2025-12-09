@@ -1,0 +1,29 @@
+package com.example.postservice.logic.post.controller;
+
+import com.example.postservice.logic.post.model.request.CreatePostRequest;
+import com.example.postservice.logic.post.model.response.PostResponse;
+import com.example.postservice.logic.post.service.PostService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/posts")
+public class PostController {
+
+    private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
+
+    @PostMapping
+    public PostResponse create(@RequestBody CreatePostRequest request) {
+        return postService.createPost(request);
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<PostResponse> getByUser(@PathVariable String userId) {
+        return postService.getPostsByUser(userId);
+    }
+}

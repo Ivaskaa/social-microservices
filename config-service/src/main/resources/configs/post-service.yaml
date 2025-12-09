@@ -2,22 +2,20 @@ server:
   port: 8083
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/social
-    username: postgres
-    password: password
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: myapp
+      username: root
+      password: example
+      authentication-database: admin
+
   kafka:
     bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
-  elasticsearch:
-    hosts: http://localhost:9200
 
 feign:
   client:
